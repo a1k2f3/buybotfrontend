@@ -1,0 +1,23 @@
+import React from "react";
+import { FaShoppingCart, FaUser } from "react-icons/fa";
+
+const NavActions: React.FC = () => {
+  return (
+    <div className="hidden md:flex items-center space-x-4">
+      {/* Cart */}
+      <button className="relative">
+        <FaShoppingCart className="text-gray-700 hover:text-blue-600" size={18} />
+        <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+          2
+        </span>
+      </button>
+
+      {/* Login Button */}
+      <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg font-semibold text-sm flex items-center">
+        <FaUser className="mr-2" size={14} /> Login
+      </button>
+    </div>
+  );
+};
+
+export default NavActions;

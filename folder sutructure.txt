@@ -132,12 +132,7 @@ ecommerce-customer/
 ├── styles/                       # Additional styles if needed
 │   └── animations.css
 │
-├── utils/                        # Helper functions
-│   ├── formatDate.ts
-│   ├── currencyFormatter.ts
-│   ├── validators.ts
-│   ├── constants.ts
-│   └── mapHelpers.ts             # Functions for Google Maps rendering
+├── cd..            # Functions for Google Maps rendering
 │
 ├── .env.local
 ├── next.config.mjs
