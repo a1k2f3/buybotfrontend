@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
 
@@ -13,10 +14,13 @@ const NavActions: React.FC = () => {
       </button>
 
       {/* Login Button */}
+<Link href="/auth/login" passHref>
       <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg font-semibold text-sm flex items-center">
         <FaUser className="mr-2" size={14} /> Login
       </button>
+    </Link>
     </div>
+
   );
 };
 

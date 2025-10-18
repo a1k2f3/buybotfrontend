@@ -1,27 +1,45 @@
+"use client";
 import React from "react";
-import Link from "next/link";
+import NavLogo from "./NavbarLogo";
+import NavLinks from "./NavLinks";
+import NavActions from "./Navaction";
+import NavSearch from "./NavSearch";
+import BottomNavbar from "./BttomNavbar";
 
 const MobileMenu: React.FC = () => {
-  const links = [
-    { name: "Home", href: "/" },
-    { name: "Shop", href: "/shop" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
-  ];
-
   return (
-    <div className="md:hidden bg-white border-t shadow-md">
-      <div className="flex flex-col space-y-3 py-4 px-4">
-        {links.map((link) => (
-          <Link
-            key={link.name}
-            href={link.href}
-            className="text-gray-700 hover:text-blue-600 font-medium"
-          >
-            {link.name}
-          </Link>
-        ))}
+    <div className="md:hidden w-full bg-white text-gray-800 z-50 flex flex-col min-h-screen">
+      {/* 🔹 Top Bar — Logo + Search + Login */}
+      <div className="w-full bg-white px-4 py-3 border-b shadow-sm flex items-center justify-between sticky top-0 left-0 z-50">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <NavLogo />
+        </div>
+
+        {/* Search Bar */}
+        <div className="flex-1 mx-3">
+          <NavSearch />
+        </div>
+
+        {/* Login / Profile */}
+        <div className="flex-shrink-0">
+          <NavActions />
+        </div>
       </div>
+
+      {/* 🔹 Middle Nav Links */}
+    
+
+      {/* 🔹 Main content padding space */}
+      <div className="flex-grow"></div>
+
+      {/* 🔹 Bottom Bar — Cart + Shortcuts */}
+      <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-md">
+    <BottomNavbar/>
+      </div>
+
+      {/* Padding to prevent bottom overlap */}
+      <div className="pb-16"></div>
     </div>
   );
 };
