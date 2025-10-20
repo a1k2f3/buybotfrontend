@@ -39,12 +39,12 @@ const LoginForm: React.FC = () => {
 
       <p className="text-center text-sm text-gray-600 mt-5">
         Don’t have an account?{" "}
-        <Link href="/register" className="text-blue-600 hover:underline font-medium">
+        <Link href="/auth/rigester" className="text-blue-600 hover:underline font-medium">
           Register
         </Link>
       </p>
-      <SocialLoginButton provider="google" onClick={() => console.log("Google login")} />
-        <SocialLoginButton provider="facebook" onClick={() => console.log("Facebook login")} />
+      <SocialLoginButton provider="google" onClick={() => console.log("Google login")} title="Login in with google"  />
+        <SocialLoginButton provider="facebook" onClick={() => console.log("Facebook login")} title="Login in with facebook" />
     </form>
   );
 };

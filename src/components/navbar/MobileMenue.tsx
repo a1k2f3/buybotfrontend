@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import NavLogo from "./NavbarLogo";
-import NavLinks from "./NavLinks";
+// import NavLinks from "./NavLinks";
 import NavActions from "./Navaction";
 import NavSearch from "./NavSearch";
 import BottomNavbar from "./BttomNavbar";

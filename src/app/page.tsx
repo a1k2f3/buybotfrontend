@@ -1,11 +1,17 @@
-import React from 'react'
+"use client";
 
-function page() {
+import HeroSection from "@/components/card/HeroSection";
+import CategoriesSection from "@/components/card/Catagorysection";
+import ProductsSection from "@/components/card/ProductSection";
+import Footer from "@/components/card/Footer";
+
+export default function HomePage() {
   return (
-    <div>
-      mainpage
-    </div>
-  )
+    <main className="min-h-screen flex flex-col bg-gradient-to-b from-white to-blue-50 text-gray-800">
+      <HeroSection />
+      <CategoriesSection />
+      <ProductsSection />
+      <Footer />
+    </main>
+  );
 }
-
-export default page

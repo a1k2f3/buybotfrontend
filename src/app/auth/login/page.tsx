@@ -6,12 +6,14 @@ import LoginForm from "@/components/forms/LoginForm";
 
 const LoginPage: React.FC = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <>
+    <div className=" flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <Logo />
+        <Logo  title=" Welcome back login" />
         <LoginForm />
       </div>
     </div>
+    </>
   );
 };
 
