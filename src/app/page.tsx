@@ -9,7 +9,9 @@ export default function HomePage() {
   return (
     <main className="min-h-screen flex flex-col bg-gradient-to-b from-white to-blue-50 text-gray-800">
        {/* Adjust based on navbar height */}
+  <div className="mt-10">
   <HeroSection />
+  </div>
 
       <CategoriesSection />
       <ProductsSection />

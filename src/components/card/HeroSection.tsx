@@ -15,7 +15,7 @@ export default function MainSection() {
         className="max-w-xl text-center md:text-left"
       >
         <h1 className="text-5xl md:text-6xl font-bold text-gray-800 leading-tight">
-          Shop smarter with <span className="text-blue-600">BuyBot&apos;s</span> AI assistant
+          Shop smarter with <span className="text-blue-600">BuyBots</span> 
         </h1>
 
         <p className="mt-4 text-gray-600 text-lg">
