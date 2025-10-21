@@ -8,7 +8,9 @@ import Footer from "@/components/card/Footer";
 export default function HomePage() {
   return (
     <main className="min-h-screen flex flex-col bg-gradient-to-b from-white to-blue-50 text-gray-800">
-      <HeroSection />
+       {/* Adjust based on navbar height */}
+  <HeroSection />
+
       <CategoriesSection />
       <ProductsSection />
       <Footer />

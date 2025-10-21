@@ -8,8 +8,8 @@ import BottomNavbar from "./BttomNavbar";
 
 const MobileMenu: React.FC = () => {
   return (
-    <div className="md:hidden w-full bg-white text-gray-800 z-50 flex flex-col min-h-screen">
-      {/* 🔹 Top Bar — Logo + Search + Login */}
+    <div className="md:hidden w-full bg-white text-gray-800 z-50 flex flex-col ">
+      {/* 🔹 Top Bar — Logo + Seaarch + Login */}
       <div className="w-full bg-white px-4 py-3 border-b shadow-sm flex items-center justify-between sticky top-0 left-0 z-50">
         {/* Logo */}
         <div className="flex items-center gap-2">
