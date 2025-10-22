@@ -56,8 +56,8 @@ export default function SupportPage() {
       >
         <h1 className="text-5xl font-bold text-blue-700 mb-4">Welcome to Support</h1>
         <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-        {/* <p>It&apos;s time to get help.</p> */}
-  We're&apos; here to help! Choose a support option below to get assistance, leave feedback, or find answers.
+        <p>It&apos;s time to get help.</p>
+  We re&apos; here to help! Choose a support option below to get assistance, leave feedback, or find answers.
         </p>
       </motion.div>
 

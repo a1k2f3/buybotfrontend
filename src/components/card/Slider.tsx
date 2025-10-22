@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AiOutlineRobot } from "react-icons/ai";
-// import { FaShoppingBag, FaMobileAlt, FaTshirt } from "react-icons/fa";
+
 import MainSection from "./HeroSection";
 import { slides } from "./data/slides";
 export default function Slider() {
