@@ -4,9 +4,9 @@ import Link from "next/link";
 const NavLinks: React.FC = () => {
   const links = [
     { name: "Home", href: "/" },
-    { name: "Shop", href: "/shop" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
+    { name: "order", href: "/orders" },
+    { name: "About", href: "/static/about" },
+    { name: "Help", href: "/support" },
   ];
 
   return (

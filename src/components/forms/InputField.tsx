@@ -19,6 +19,7 @@ const InputField: React.FC<InputFieldProps> = ({
 }) => {
   return (
     <div>
+      {/* <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500 text-lg" /> */}
       <label htmlFor={id} className="block text-sm font-medium text-gray-700">
         {label}
       </label>
