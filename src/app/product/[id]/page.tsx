@@ -6,7 +6,7 @@ import { ShoppingCart, Truck, Shield, RefreshCw, Star, ChevronRight } from "luci
 
 async function getProduct(id: string) {
   try {
-    const res = await fetch(`http://localhost:5000/api/products/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${id}`, {
       cache: "no-store",
       next: { revalidate: 30 },
     });
