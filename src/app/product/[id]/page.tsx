@@ -8,7 +8,7 @@ async function getProduct(id: string) {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${id}`, {
       cache: "no-store",
-      next: { revalidate: 30 },
+      next: { revalidate: 60 },
     });
     if (!res.ok) return null;
     return await res.json();
