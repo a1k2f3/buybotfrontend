@@ -1,35 +1,35 @@
+// app/layout.tsx
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar/Navbar";
+// import BottomNavbar from "@/components/ui/BottomNavbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Use Inter – 100% stable, looks almost exactly like Geist
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
   title: "BUYBOT",
-  description: "the best ecommerece website",
+  description: "The best ecommerce website",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Navbar/>
-        {children}
+    <html lang="en" className="scroll-smooth">
+      <body className={`${inter.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
+        <Navbar />
+        <main className="min-h-screen pt-16 pb-20 lg:pb-0">
+          {children}
+        </main>
+        {/* <BottomNavbar /> */}
       </body>
     </html>
   );
