@@ -11,11 +11,29 @@ import ProductSpecs from "@/components/card/ProductSpecs";
 import ProductHighlights from "@/components/card/ProductHighlights";
 
 async function getProduct(id: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/${id}`, {
-    cache: "no-store",
-  });
-  if (!res.ok) return null;
-  return res.json();
+  const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!apiUrl) {
+    console.error("API URL not set!");
+    return null;
+  }
+
+  try {
+    const res = await fetch(`${apiUrl}/api/products/${id}`, {
+      cache: "no-store",
+      next: { revalidate: 60 }, // optional: cache for 60s
+    });
+
+    if (!res.ok) {
+      console.error("Fetch failed:", res.status);
+      return null;
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Fetch error:", error);
+    return null;
+  }
 }
 
 // THIS IS THE ONLY CHANGE YOU NEED
