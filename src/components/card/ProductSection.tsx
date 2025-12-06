@@ -45,7 +45,7 @@ export default function ProductsSection() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/products/random?limit=8");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/random`);
 
         if (!res.ok) throw new Error("Failed to fetch products");
 

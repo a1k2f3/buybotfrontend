@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
     // Optional: also silence TS errors during build (if you want)
     ignoreBuildErrors: false,
   },
+  
 };
 
 export default nextConfig;
