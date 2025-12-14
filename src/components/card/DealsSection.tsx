@@ -9,48 +9,30 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function DealsSection() {
   const [timeLeft, setTimeLeft] = useState<{ [key: string]: string }>({});
 
-  // Correct API with tags parameter
-  const { data, error, isLoading } = useSWR(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products?tags=70-off`,  // ← Fixed: tags=70-off
+  const { data, isLoading } = useSWR(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products?tags=70-off`,
     fetcher,
     { revalidateOnFocus: false }
   );
 
-  // Safely get the products array
   const products = data?.data || [];
 
-  // Countdown Timer Effect
   useEffect(() => {
     if (products.length === 0) return;
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         const updated = { ...prev };
-
         products.forEach((product: any) => {
           const id = product._id;
           if (!updated[id]) {
-            // Random time between 1-8 hours
-            const totalSeconds = Math.floor(Math.random() * 28800) + 3600;
-            const h = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
-            const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
-            const s = String(totalSeconds % 60).padStart(2, "0");
-            updated[id] = `${h}:${m}:${s}`;
+            const totalSeconds = Math.floor(Math.random() * 36000) + 7200;
+            updated[id] = formatTime(totalSeconds);
           } else {
-            let [h, m, s] = updated[id].split(":").map(Number);
-            if (s > 0) s--;
-            else if (m > 0) {
-              s = 59;
-              m--;
-            } else if (h > 0) {
-              s = 59;
-              m = 59;
-              h--;
-            }
-            updated[id] = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+            const seconds = parseTime(updated[id]) - 1;
+            updated[id] = seconds <= 0 ? "00:00:00" : formatTime(seconds);
           }
         });
-
         return updated;
       });
     }, 1000);
@@ -58,87 +40,107 @@ export default function DealsSection() {
     return () => clearInterval(timer);
   }, [products]);
 
-  // Loading State
+  const formatTime = (totalSeconds: number): string => {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  };
+
+  const parseTime = (timeStr: string): number => {
+    const [h, m, s] = timeStr.split(":").map(Number);
+    return h * 3600 + m * 60 + s;
+  };
+
   if (isLoading) {
     return (
-      <div className="overflow-x-auto scrollbar-hide">
-        <div className="flex gap-6 py-4 min-w-max">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="w-64 h-80 bg-gray-200 rounded-xl animate-pulse shadow" />
-          ))}
-        </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        {[...Array(12)].map((_, i) => (
+          <div key={i} className="bg-white rounded-lg shadow animate-pulse">
+            <div className="aspect-square bg-gray-200 rounded-t-lg" />
+            <div className="p-3 space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-full" />
+              <div className="h-6 bg-gray-200 rounded w-2/3" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
 
-  // Empty State
   if (products.length === 0) {
     return (
-      <div className="text-center py-16 text-gray-500 text-lg font-medium">
-        No 70% OFF deals available right now. Check back soon!
+      <div className="text-center py-20">
+        <p className="text-xl font-medium text-gray-400">
+          No flash deals right now. Stay tuned! 🔥
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto scrollbar-hide">
-      <div className="flex gap-6 py-4 min-w-max">
-        {products.map((product: any) => {
-          // Simulate original price for ~70% discount
-          const originalPrice = Math.round(product.price / 0.3); // 70% off logic
-          const discount = 70; // Or calculate dynamically
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      {products.map((product: any) => {
+        const originalPrice = Math.round(product.price / 0.3);
+        const savings = originalPrice - product.price;
 
-          return (
-            <Link
-              key={product._id}
-              href={`/product/${product.slug || product._id}`}
-              className="group block"
-            >
-              <div className="relative bg-white rounded-xl shadow-lg overflow-hidden w-64 transition-all duration-300 hover:shadow-2xl hover:scale-105">
-                {/* Product Image */}
-                <div className="aspect-video relative">
-                  <Image
-                    src={product.thumbnail || product.images?.[0]?.url || "/placeholder.jpg"}
-                    alt={product.name}
-                    fill
-                    sizes="256px"
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
+        return (
+          <Link
+            key={product._id}
+            href={`/product/${product.slug || product._id}`}
+            className="group block"
+          >
+            <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              {/* Image - Square for compact feel */}
+              <div className="relative aspect-square">
+                <Image
+                  src={product.thumbnail || product.images?.[0]?.url || "/placeholder.jpg"}
+                  alt={product.name}
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
 
-                  {/* Discount Badge */}
-                  <div className="absolute top-3 left-3 bg-red-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl animate-pulse">
-                    {discount}% OFF
-                  </div>
+                {/* Discount Badge */}
+                <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                  -70%
                 </div>
 
-                {/* Product Details */}
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg line-clamp-2 text-gray-800">
-                    {product.name}
-                  </h3>
+                {/* Flash Indicator */}
+                <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
+                  <span className="w-2 h-2 bg-black rounded-full animate-ping" />
+                  FLASH
+                </div>
+              </div>
 
-                  <div className="flex items-center gap-3 mt-3">
-                    <span className="text-2xl font-bold text-green-600">
+              {/* Details */}
+              <div className="p-3">
+                <h3 className="text-sm font-medium text-gray-800 line-clamp-2 mb-2 group-hover:text-orange-600 transition-colors">
+                  {product.name}
+                </h3>
+
+                <div className="flex items-end justify-between">
+                  <div>
+                    <span className="text-lg font-bold text-green-600">
                       RS {product.price.toLocaleString()}
                     </span>
-                    <span className="text-gray-500 line-through text-sm">
+                    <span className="text-xs text-gray-500 line-through ml-2">
                       RS {originalPrice.toLocaleString()}
                     </span>
                   </div>
+                </div>
 
-                  {/* Countdown */}
-                  <div className="mt-4 text-center">
-                    <p className="text-xs text-gray-600 font-medium">Deal ends in:</p>
-                    <p className="text-xl font-mono font-bold text-red-600 tracking-wider">
-                      {timeLeft[product._id] || "00:00:00"}
-                    </p>
-                  </div>
+                {/* Small Timer */}
+                <div className="mt-3 bg-gray-900 text-white text-center rounded py-1.5">
+                  <p className="text-xs font-mono font-bold">
+                    {timeLeft[product._id] || "00:00:00"}
+                  </p>
                 </div>
               </div>
-            </Link>
-          );
-        })}
-      </div>
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 }

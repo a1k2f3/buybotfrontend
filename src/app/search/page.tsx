@@ -93,7 +93,7 @@ export default function SearchResultsPage() {
             {results.map((product) => (
               <Link
                 key={product._id}
-                href={`/products/${product._id}`}
+                href={`/product/${product._id}`}
                 className="group block"
               >
                 <div className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">

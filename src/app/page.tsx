@@ -50,7 +50,7 @@ export default function HomePage() {
 
       {/* All Products / New Arrivals */}
       <section className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
          
           <ProductsSection />
         </div>
@@ -58,7 +58,7 @@ export default function HomePage() {
 
       {/* Trust & Security */}
       <section className="py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl  px-4 sm:px-6 lg:px-8">
           <TrustBadges />
         </div>
       </section>
