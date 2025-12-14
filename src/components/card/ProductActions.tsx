@@ -1,16 +1,68 @@
-// app/products/[id]/ProductActions.tsx
-"use client";
+'use client'; // Make it a client component for interactivity
 
-import { useState } from "react";
-import { ShoppingCart, Heart, Share2, Copy, MessageCircle, Shield, Truck, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ShoppingCart, Heart, Share2, Copy, Shield, Truck, Check } from "lucide-react";
 
 export default function ProductActions({ product }: { product: any }) {
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareText = `Check out ${product.name} - Only ${product.price} RS!`;
 
+  const handleAddToCart = async () => {
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    const token = localStorage.getItem('token');
+    const userID=localStorage.getItem('UserId')?.replace(/"/g, "") // Token from login
+console.log("Using token:", token);
+console.log("Using UserID:", userID);
+    if (!token) {
+      setError('Please login to add to cart');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cart/add?userId=${userID}
+`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // Send token here
+        },
+        body: JSON.stringify({
+          productId: product._id, // Use product's actual ID
+          quantity,
+          storeId: product.brand?._id || "",
+          
+          // Use current quantity state
+        })
+      });
+console.log(product._id)
+console.log(quantity)
+console.log("ehuh",product.brand?._id || "")
+      if (!response.ok) {
+        throw new Error('Failed to add to cart');
+      }
+
+      const data = await response.json();
+      setSuccess(true);
+      console.log(data); // For debugging
+      // Optional: Update global cart state or redirect
+    } catch (err: any) {
+      setError(err.message);
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+// useEffect
   return (
     <div className="space-y-6">
       {/* Quantity + Buttons */}
@@ -21,14 +73,22 @@ export default function ProductActions({ product }: { product: any }) {
           <button onClick={() => setQuantity(quantity + 1)} className="px-4 py-3 hover:bg-gray-100">+</button>
         </div>
 
-        <button className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition flex items-center justify-center gap-3">
-          <ShoppingCart className="w-6 h-6" /> Add to Cart
+        <button 
+          onClick={handleAddToCart}
+          disabled={loading}
+          className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition flex items-center justify-center gap-3 disabled:opacity-50"
+        >
+          <ShoppingCart className="w-6 h-6" /> 
+          {loading ? 'Adding...' : 'Add to Cart'}
         </button>
 
         <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-lg hover:shadow-xl transition">
           Buy Now
         </button>
       </div>
+
+      {error && <p className="text-red-500 text-center">{error}</p>}
+      {success && <p className="text-green-500 text-center">Added to cart successfully!</p>}
 
       {/* Wishlist & Share */}
       <div className="flex gap-3">

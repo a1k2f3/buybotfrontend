@@ -20,7 +20,7 @@ interface Brand {
   name: string;
 }
 
-interface Image {
+interface ImageObj {
   url: string;
   public_id: string;
 }
@@ -29,11 +29,13 @@ interface Product {
   _id: string;
   name: string;
   price: number;
+  currency?: string;
   thumbnail?: string;
-  images?: Image[];
-  category?: Category;
-  brand?: Brand;
+  images?: ImageObj[];
+  category?: Category | null;
+  brand?: Brand | null;
   tags?: Tag[];
+  rating?: number;
 }
 
 interface ProductCardProps {
@@ -41,72 +43,70 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  // Safe fallbacks
   const safeImage = product.thumbnail || product.images?.[0]?.url || "/placeholder.jpg";
   const safeCategory = product.category?.name || "Uncategorized";
-  const safeBrand = product.brand?.name || "Unknown Brand";
+  const safeBrand = product.brand?.name || "Brand";
   const firstTag = product.tags?.[0];
+  const displayRating = product.rating || 4.8;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={{ duration: 0.5 }}
       viewport={{ once: true }}
-      className="group relative"
+      className="group"
     >
-      <Link href={`/product/${product._id}`} className="block">
-        <div className="relative overflow-hidden rounded-2xl bg-white/80 backdrop-blur-xl shadow-lg border border-white/20 hover:shadow-2xl transition-all duration-500 hover:-translate-y-3">
+      <Link href={`/product/${product._id}`}>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-300">
           
           {/* Image */}
-          <div className="relative aspect-square w-full overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+          <div className="relative aspect-square">
             <Image
               src={safeImage}
               alt={product.name}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-110"
-              sizes="(max-width: 768px) 100vw, 33vw"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
-            
-            {/* Tag Badge - Only if exists */}
+
+            {/* Tag Badge */}
             {firstTag && (
-              <div className="absolute top-4 left-4 z-10">
-                <span
-                  className="px-4 py-1.5 rounded-full text-xs font-bold text-white shadow-lg"
-                  style={{ backgroundColor: firstTag.color || "#6366f1" }}
-                >
-                  {firstTag.name}
-                </span>
-              </div>
+              <span
+                className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold text-white rounded-md shadow"
+                style={{ backgroundColor: firstTag.color || "#4f46e5" }}
+              >
+                {firstTag.name.toUpperCase()}
+              </span>
             )}
 
             {/* Quick Add Button */}
-            <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-gradient-to-t from-black/70 to-transparent p-6">
-              <button className="w-full flex items-center justify-center gap-2 bg-white text-black font-semibold py-3 rounded-xl hover:bg-gray-100 transition-all shadow-xl">
-                <ShoppingCart size={20} />
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button className="flex items-center gap-2 bg-white text-gray-900 px-5 py-2.5 rounded-full shadow-lg font-medium text-sm hover:bg-gray-100">
+                <ShoppingCart size={18} />
                 Add to Cart
               </button>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="p-5 space-y-3">
-            <div className="flex items-center justify-between text-xs text-gray-500">
-              <span className="font-medium">{safeCategory}</span>
-              <span className="text-gray-400">{safeBrand}</span>
-            </div>
-
-            <h3 className="font-bold text-lg text-gray-800 line-clamp-2 group-hover:text-blue-600 transition-colors">
+          {/* Info */}
+          <div className="p-4 space-y-2">
+            <p className="text-xs text-gray-500">{safeCategory} • {safeBrand}</p>
+            
+            <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">
               {product.name}
             </h3>
 
             <div className="flex items-center justify-between">
-              <p className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+              <p className="text-xl font-bold text-gray-900">
                 ₹{product.price.toLocaleString("en-IN")}
               </p>
+
               <div className="flex items-center gap-1">
                 <Star size={16} className="fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-medium">4.8</span>
+                <span className="text-sm font-medium text-gray-700">
+                  {displayRating.toFixed(1)}
+                </span>
               </div>
             </div>
           </div>

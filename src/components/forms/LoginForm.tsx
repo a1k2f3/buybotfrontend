@@ -107,7 +107,7 @@ const router =useRouter();
             <p className="text-center text-sm text-gray-600 mt-5">
                 Don’t have an account?{" "}
                 {/* FIX: Changed 'rigester' to 'register' */}
-                <Link href="/auth/register" className="text-blue-600 hover:underline font-medium">
+                <Link href="/auth/rigester" className="text-blue-600 hover:underline font-medium">
                     Register
                 </Link>
             </p>

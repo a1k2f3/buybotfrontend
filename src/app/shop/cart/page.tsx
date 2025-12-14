@@ -3,80 +3,211 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Trash2, Plus, Minus, Tag, Truck, Shield } from "lucide-react";
 
-// Fake cart data (replace with your cart context/store later)
-const initialCartItems = [
-  {
-    id: "1",
-    name: "Wireless Bluetooth Headphones Pro",
-    price: 4999,
-    quantity: 1,
-    image: "/api/placeholder/400/400",
-    inStock: true,
-  },
-  {
-    id: "2",
-    name: "Smart Watch Series 8",
-    price: 28999,
-    quantity: 2,
-    image: "/api/placeholder/400/400",
-    inStock: true,
-  },
-  {
-    id: "3",
-    name: "Premium Leather Wallet",
-    price: 1599,
-    quantity: 1,
-    image: "/api/placeholder/400/400",
-    inStock: false,
-  },
-  {
-    id: "4",
-    name: "Premium Leather Wallet",
-    price: 1599,
-    quantity: 1,
-    image: "/api/placeholder/400/400",
-    inStock: false,
-  },
-  {
-    id: "5",
-    name: "Premium Leather Wallet",
-    price: 1599,
-    quantity: 1,
-    image: "/api/placeholder/400/400",
-    inStock: false,
-  },
-  {
-    id: "6",
-    name: "Premium Leather Wallet",
-    price: 1599,
-    quantity: 1,
-    image: "/api/placeholder/400/400",
-    inStock: false,
-  },
-];
+// Define CartItem interface for type safety
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  inStock: boolean;
+}
 
 export default function CartPage() {
-  const [items, setItems] = useState(initialCartItems);
+  const [items, setItems] = useState<CartItem[]>([]);
   const [coupon, setCoupon] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false); // Not used, but keeping for potential future use
 
-  const updateQuantity = (id: string, change: number) => {
-    setItems(items.map(item =>
-      item.id === id
-        ? { ...item, quantity: Math.max(1, item.quantity + change) }
-        : item
-    ));
+  const fetchCart = async () => {
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    const token = localStorage.getItem("token");
+    const userID = localStorage.getItem("UserId")?.replace(/"/g, ""); // Token from login
+    console.log("Using token:", token);
+    console.log("Using UserID:", userID);
+
+    if (!token || !userID) {
+      setError("Please login to view your cart");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cart?userId=${userID}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Send token here
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch cart");
+      }
+
+      const data = await response.json();
+      setSuccess(true);
+      console.log(data);
+
+      // Assuming backend returns { cart: { items: [{ productId: { _id, name, price, image, inStock }, quantity }] } }
+      // Map to frontend CartItem format
+      const populatedItems: CartItem[] = data.items.map((item: any) => ({
+        id: item.productId._id.toString(),
+        name: item.productId.name,
+        price: item.productId.price,
+        quantity: item.quantity,
+        image: item.productId.image || "/api/placeholder/400/400",
+        inStock: item.productId.inStock ?? true,
+      }));
+
+      setItems(populatedItems);
+    } catch (err: any) {
+      setError(err.message);
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeItem = (id: string) => {
-    setItems(items.filter(item => item.id !== id));
+  useEffect(() => {
+    fetchCart();
+  }, []); // Fixed dependency array
+
+  const updateQuantity = async (id: string, change: number) => {
+    const token = localStorage.getItem("token");
+    const userID = localStorage.getItem("UserId")?.replace(/"/g, "");
+
+    if (!token || !userID) {
+      setError("Please login to update cart");
+      return;
+    }
+
+    // Find the item and calculate new quantity
+    const item = items.find((item) => item.id === id);
+    if (!item) return;
+
+    const newQuantity = Math.max(1, item.quantity + change);
+
+    // Optimistic update: Update local state first for smooth UX
+    const prevItems = [...items];
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, quantity: newQuantity } : item
+      )
+    );
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cart/update?userId=${userID}`,
+        {
+          method: "PUT", // Assuming POST for update
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: id,
+            quantity: newQuantity,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update cart item");
+      }
+
+      const data = await response.json();
+      console.log("Update successful:", data);
+
+      // Optionally, refetch cart to sync with backend (e.g., if totalPrice or other changes)
+      // await fetchCart();
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
+      // Rollback optimistic update on failure
+      setItems(prevItems);
+    }
+  };
+
+  const removeItem = async (id: string) => {
+    const token = localStorage.getItem("token");
+    const userID = localStorage.getItem("UserId")?.replace(/"/g, "");
+
+    if (!token || !userID) {
+      setError("Please login to update cart");
+      return;
+    }
+
+    // Optimistic update: Remove from local state first
+    const prevItems = [...items];
+    setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/cart/remove/${id}?userId=${userID}`, // Assuming a remove endpoint
+        {
+          method: "DELETE", // Or DELETE, depending on your backend
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: id,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to remove cart item");
+      }
+
+      const data = await response.json();
+      console.log("Remove successful:", data);
+
+      // Optionally, refetch cart
+      // await fetchCart();
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
+      // Rollback on failure
+      setItems(prevItems);
+    }
   };
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = coupon === "SAVE10" ? subtotal * 0.1 : 0;
   const total = subtotal - discount;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-3xl mx-auto text-center px-6">
+          <p className="text-xl text-gray-600">Loading your cart...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-3xl mx-auto text-center px-6">
+          <p className="text-xl text-red-600">Error: {error}</p>
+          <Link href="/login" className="mt-4 block text-indigo-600 hover:text-indigo-700 font-medium">
+            Go to Login
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -122,7 +253,7 @@ export default function CartPage() {
                     {item.name}
                   </h3>
                   <p className="text-2xl font-bold text-indigo-600 mt-2">
-                    Rs{item.price.toLocaleString()}
+                    ₹{item.price.toLocaleString("en-IN")}
                   </p>
 
                   <div className="flex items-center gap-4 mt-4">
@@ -164,17 +295,17 @@ export default function CartPage() {
               <div className="space-y-4">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal ({items.length} items)</span>
-                  <span className="font-semibold">₹{subtotal.toLocaleString()}</span>
+                  <span className="font-semibold">₹{subtotal.toLocaleString("en-IN")}</span>
                 </div>
 
                 <div className="flex justify-between text-green-600 font-bold">
                   <span>Discount {coupon === "SAVE10" ? "(SAVE10)" : ""}</span>
-                  <span>-Rs{discount.toLocaleString()}</span>
+                  <span>-₹{discount.toLocaleString("en-IN")}</span>
                 </div>
 
                 <div className="flex justify-between text-lg font-bold text-gray-900 border-t pt-4">
                   <span>Total</span>
-                  <span className="text-2xl text-indigo-600">₹{total.toLocaleString()}</span>
+                  <span className="text-2xl text-indigo-600">₹{total.toLocaleString("en-IN")}</span>
                 </div>
 
                 {/* Coupon */}

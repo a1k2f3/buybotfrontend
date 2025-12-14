@@ -1,20 +1,75 @@
 "use client";
 
-import HeroSection from "@/components/card/HeroSection";
+import Slider from "@/components/card/Slider"; // Hero slider with deals
+import DealsSection from "@/components/card/DealsSection"; // New: Flash sales/deals
+import FeaturedBrands from "@/components/card/FeaturedBrands"; // New: Brands/vendors
 import CategoriesSection from "@/components/card/Catagorysection";
-import ProductsSection from "@/components/card/ProductSection";
+import TrendingProducts from "@/components/card/TrendingProducts"; // New or rename FeaturedProducts
+import ProductsSection from "@/components/card/ProductSection"; // All/New Arrivals
+import TrustBadges from "@/components/card/TrustBadge";
+import NewsletterSignup from "@/components/card/NewsLetterSignup";
 import Footer from "@/components/card/Footer";
-import Slider from "@/components/card/Slider";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen flex flex-col bg-gradient-to-b from-white to-blue-50 text-gray-800">
-       {/* Adjust based on navbar height */}
-  <div className="mt-10">
-  <Slider />
-  </div>
-      <CategoriesSection />
-      <ProductsSection />
+    <main className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
+      {/* Hero Slider - Big promotions & deals */}
+      <section className="relative">
+        <Slider /> {/* Make this show flash sales, categories teasers, big banners */}
+      </section>
+
+      {/* Flash Deals / Limited Time Offers */}
+      <section className="py-8  text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <DealsSection /> {/* Countdown timers, % off, limited stock */}
+        </div>
+      </section>
+
+      {/* Featured Brands / Vendors - Hub feel */}
+      
+
+      {/* Large Categories Grid - Discovery focus */}
+      <section className="py-12 bg-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-10">
+            Explore Categories
+          </h2>
+          <CategoriesSection /> {/* Make this a large image grid with overlays */}
+        </div>
+      </section>
+
+      {/* Trending / Hot Products */}
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 text-orange-600">
+            Trending Now
+          </h2>
+          <TrendingProducts limit={12} /> {/* Carousel or wide grid */}
+        </div>
+      </section>
+
+      {/* All Products / New Arrivals */}
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+         
+          <ProductsSection />
+        </div>
+      </section>
+
+      {/* Trust & Security */}
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <TrustBadges />
+        </div>
+      </section>
+
+      {/* Newsletter */}
+      <section className="py-16 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <NewsletterSignup />
+        </div>
+      </section>
+
       <Footer />
     </main>
   );
