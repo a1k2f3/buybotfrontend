@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Trash2, Plus, Minus, Tag, Truck, Shield } from "lucide-react";
-
+import { useRouter } from "next/router";
+// useRouter
 // Define CartItem interface for type safety
 interface CartItem {
   id: string;
@@ -22,7 +23,7 @@ export default function CartPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false); // Not used, but keeping for potential future use
-
+const router=useRouter()
   const fetchCart = async () => {
     setLoading(true);
     setError(null);
@@ -34,6 +35,7 @@ export default function CartPage() {
     console.log("Using UserID:", userID);
 
     if (!token || !userID) {
+      router.push('/auth/login')
       setError("Please login to view your cart");
       setLoading(false);
       return;
@@ -125,10 +127,8 @@ export default function CartPage() {
       }
 
       const data = await response.json();
-      console.log("Update successful:", data);
-
-      // Optionally, refetch cart to sync with backend (e.g., if totalPrice or other changes)
-      // await fetchCart();
+  
+    
     } catch (err: any) {
       console.error(err);
       setError(err.message);
@@ -170,8 +170,7 @@ export default function CartPage() {
       }
 
       const data = await response.json();
-      console.log("Remove successful:", data);
-
+    
       // Optionally, refetch cart
       // await fetchCart();
     } catch (err: any) {

@@ -12,7 +12,7 @@ export default function BottomNavbar() {
     { name: "Home", icon: FaHome, href: "/" },
     { name: "orders", icon: FaShoppingBag, href: "/orders" },
     { name: "Cart", icon: FaShoppingCart, href: "/shop/cart", badge: 3 },
-    { name: "Account", icon: FaUserAlt, href: "/account" },
+    { name: "Account", icon: FaUserAlt, href: "/profile" },
   ];
 
   return (
