@@ -199,7 +199,6 @@ const router=useRouter()
     return (
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="max-w-3xl mx-auto text-center px-6">
-          <p className="text-xl text-red-600">Error: {error}</p>
           <Link href="/login" className="mt-4 block text-indigo-600 hover:text-indigo-700 font-medium">
             Go to Login
           </Link>
