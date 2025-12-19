@@ -33,7 +33,8 @@ const NavSearch: React.FC = () => {
       setLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:5000/api/products/search/suggestions?q=${encodeURIComponent(
+          `${process.env.
+NEXT_PUBLIC_API_BASE_URL}/api/products/search/suggestions?q=${encodeURIComponent(
             query.trim()
           )}`
         );
