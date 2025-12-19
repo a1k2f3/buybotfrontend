@@ -21,7 +21,7 @@ export default function CategoriesSection() {
     const fetchCategories = async () => {
       try {
         // This will work 100% if backend is running
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         const response = await fetch(`${baseUrl}/api/categories`, {
           cache: "no-store",
         });
