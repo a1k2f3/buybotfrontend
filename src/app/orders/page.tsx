@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import Image from "next/image";
-
+import { useRouter } from "next/navigation";
+// useRouter
 // Updated interfaces to match your populated API response
 interface Product {
   _id: string;
@@ -52,12 +53,13 @@ export default function OrderHistory() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+const router=useRouter()
   useEffect(() => {
     const userID = localStorage.getItem("UserId")?.replace(/"/g, "");
     const token = localStorage.getItem("token");
 
     if (!token || !userID) {
+      router.push('/auth/login')
       setError("Please log in to view your order history.");
       setLoading(false);
       return;
