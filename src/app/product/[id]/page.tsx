@@ -1,145 +1,28 @@
+// app/products/[id]/page.tsx
+// ← MUST NOT have 'use client' here!
+// ← This is a SERVER COMPONENT (async is allowed)
 
-"use client"
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ShoppingCart, Check, Truck, Shield, Star } from "lucide-react";
-// import { useState } from "react";
-import { useState } from "react";
-// We'll need this for tabs – but since this is Server Component, we'll extract tabs to a Client Component below
+import { Star, Truck, Shield, Check } from "lucide-react";
 
 import ProductGallery from "@/components/card/ProductGallery";
 import ReviewsSection from "@/components/card/ReviewsSection";
 import ProductActions from "@/components/card/ProductActions";
-import ProductSpecs from "@/components/card/ProductSpecs";
-import ProductHighlights from "@/components/card/ProductHighlights";
+import ProductTabs from "@/components/card/ProductTabs"; // This one has 'use client'
 
-// === Client Component for Tabs ===
-
-
-
-
-type TabType = "description" | "specifications" | "highlights";
-
-function ProductTabs({
-  descriptionPoints,
-  specifications,
-  highlights,
-}: {
-  descriptionPoints: string[];
-  specifications: any;
-  highlights?: string[];
-}) {
-  const [activeTab, setActiveTab] = useState<TabType>("description");
-
-  const hasSpecs = specifications && Object.keys(specifications).length > 0;
-  const hasHighlights = highlights && highlights.length > 0;
-
-  return (
-    <div className="bg-white rounded-2xl shadow-sm">
-      {/* Tab Headers */}
-      <div className="border-b border-gray-200">
-        <div className="flex flex-wrap gap-8 px-8 pt-6">
-          <button
-            onClick={() => setActiveTab("description")}
-            className={`pb-4 text-lg font-medium transition-colors relative ${
-              activeTab === "description"
-                ? "text-indigo-600"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            Description
-            {activeTab === "description" && (
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600" />
-            )}
-          </button>
-
-          {hasSpecs && (
-            <button
-              onClick={() => setActiveTab("specifications")}
-              className={`pb-4 text-lg font-medium transition-colors relative ${
-                activeTab === "specifications"
-                  ? "text-indigo-600"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Specifications
-              {activeTab === "specifications" && (
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600" />
-              )}
-            </button>
-          )}
-
-          {hasHighlights && (
-            <button
-              onClick={() => setActiveTab("highlights")}
-              className={`pb-4 text-lg font-medium transition-colors relative ${
-                activeTab === "highlights"
-                  ? "text-indigo-600"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              Key Highlights
-              {activeTab === "highlights" && (
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600" />
-              )}
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Tab Content */}
-      <div className="p-8">
-        {activeTab === "description" && (
-          <div className="space-y-4">
-            <ul className="space-y-4 text-gray-700 text-base lg:text-lg leading-relaxed">
-              {descriptionPoints.map((point, index) => (
-                <li key={index} className="flex items-start gap-4">
-                  <span className="mt-1.5 w-2 h-2 bg-indigo-600 rounded-full flex-shrink-0" />
-                  <span>{point.charAt(0).toUpperCase() + point.slice(1)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {activeTab === "specifications" && hasSpecs && (
-          <div>
-            <ProductSpecs specs={specifications} />
-          </div>
-        )}
-
-        {activeTab === "highlights" && hasHighlights && (
-          <div>
-            <ProductHighlights highlights={highlights} />
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// === Main Server Component ===
 async function getProduct(id: string) {
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (!apiUrl) throw new Error("API URL not set!");
 
-  if (!apiUrl) {
-    console.error("API URL not set!");
-    return null;
-  }
+  const res = await fetch(`${apiUrl}/api/products/${id}`, {
+    cache: "no-store",
+    next: { revalidate: 60 },
+  });
 
-  try {
-    const res = await fetch(`${apiUrl}/api/products/${id}`, {
-      cache: "no-store",
-      next: { revalidate: 60 },
-    });
-
-    if (!res.ok) return null;
-    return await res.json();
-  } catch (error) {
-    console.error("Fetch error:", error);
-    return null;
-  }
+  if (!res.ok) return null;
+  return await res.json();
 }
 
 export default async function ProductPage({
@@ -163,14 +46,13 @@ export default async function ProductPage({
 
   const availableSizes = ["S", "M", "L", "XL", "XXL"];
 
-  // Process description into bullet points
   const descriptionPoints = product.description
     ? product.description
         .split('\n')
         .map((line: string) => line.trim())
         .filter((line: string) => line.length > 0)
         .map((line: string) => line.replace(/^[-•*]\s*/, '').trim())
-    : ["Premium quality fabric", "Comfortable and breathable", "Perfect for everyday wear", "Machine washable"];
+    : ["Premium quality fabric", "Comfortable and breathable", "Modern stylish design", "Easy care and durable"];
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -178,24 +60,22 @@ export default async function ProductPage({
         {/* Breadcrumb */}
         <nav className="text-sm mb-8" aria-label="Breadcrumb">
           <ol className="flex items-center space-x-2 text-gray-500">
-            <li><Link href="/" className="hover:text-indigo-600 transition-colors">Home</Link></li>
+            <li><Link href="/" className="hover:text-indigo-600">Home</Link></li>
             <li><span className="mx-2 text-gray-400">/</span></li>
             {product.category && (
               <>
-                <li><Link href={`/category/${product.category.slug}`} className="hover:text-indigo-600 transition-colors">{product.category.name}</Link></li>
+                <li><Link href={`/category/${product.category.slug}`} className="hover:text-indigo-600">{product.category.name}</Link></li>
                 <li><span className="mx-2 text-gray-400">/</span></li>
               </>
             )}
-            <li className="font-medium text-gray-900 truncate max-w-xs">{product.name}</li>
+            <li className="font-medium text-gray-900">{product.name}</li>
           </ol>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          {/* Left: Gallery + Tabs */}
+          {/* Left Column */}
           <div className="space-y-10">
             <ProductGallery images={images} productName={product.name} />
-
-            {/* Tabs Section */}
             <ProductTabs
               descriptionPoints={descriptionPoints}
               specifications={product.specifications}
@@ -203,7 +83,7 @@ export default async function ProductPage({
             />
           </div>
 
-          {/* Right: Info & Actions */}
+          {/* Right Column */}
           <div className="space-y-10">
             <div>
               <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
@@ -236,6 +116,7 @@ export default async function ProductPage({
               </div>
             </div>
 
+            {/* Size Selector - Keep as server-rendered for now (or move to client if interactive) */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900">Select Size</h3>
               <div className="flex flex-wrap gap-3">
@@ -275,21 +156,15 @@ export default async function ProductPage({
 
         {relatedProducts?.length > 0 && (
           <section className="mt-32">
-            <h2 className="text-3xl font-bold mb-12 text-center lg:text-left">You May Also Like</h2>
+            <h2 className="text-3xl font-bold mb-12">You May Also Like</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {relatedProducts.map((item: any) => (
-                <Link
-                  key={item._id}
-                  href={`/products/${item.slug || item._id}`}
-                  className="group block bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                >
+                <Link key={item._id} href={`/products/${item.slug || item._id}`} className="group block bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
                   <div className="relative aspect-square overflow-hidden bg-gray-100">
                     <Image src={item.thumbnail} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                   </div>
                   <div className="p-5">
-                    <h3 className="font-medium text-gray-800 line-clamp-2 group-hover:text-indigo-600 transition-colors">
-                      {item.name}
-                    </h3>
+                    <h3 className="font-medium text-gray-800 line-clamp-2 group-hover:text-indigo-600">{item.name}</h3>
                     <p className="text-indigo-600 font-bold mt-3 text-lg">
                       {item.price.toLocaleString()} {item.currency || "RS"}
                     </p>
