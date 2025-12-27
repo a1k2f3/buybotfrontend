@@ -55,10 +55,10 @@ export default function ProductCard({ product }: ProductCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       viewport={{ once: true }}
-      className="group"
+      className="group w-full max-w-sm mx-auto"
     >
       <Link href={`/product/${product._id}`}>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-300">
+        <div className="bg-white shadow-sm border border-gray-200 overflow-hidden hover:shadow-md hover:border-gray-300 transition-all duration-300">
           
           {/* Image */}
           <div className="relative aspect-square">
@@ -73,7 +73,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             {/* Tag Badge */}
             {firstTag && (
               <span
-                className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold text-white rounded-md shadow"
+                className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold text-white shadow"
                 style={{ backgroundColor: firstTag.color || "#4f46e5" }}
               >
                 {firstTag.name.toUpperCase()}
@@ -82,7 +82,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             {/* Quick Add Button */}
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <button className="flex items-center gap-2 bg-white text-gray-900 px-5 py-2.5 rounded-full shadow-lg font-medium text-sm hover:bg-gray-100">
+              <button className="flex items-center gap-2 bg-white text-gray-900 px-5 py-2.5 shadow-lg font-medium text-sm hover:bg-gray-100">
                 <ShoppingCart size={18} />
                 Add to Cart
               </button>
@@ -99,7 +99,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             <div className="flex items-center justify-between">
               <p className="text-xl font-bold text-gray-900">
-                ₹{product.price.toLocaleString("en-IN")}
+                RS {product.price.toLocaleString("en-IN")}
               </p>
 
               <div className="flex items-center gap-1">

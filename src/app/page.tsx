@@ -50,10 +50,10 @@ export default function HomePage() {
 
       {/* All Products / New Arrivals */}
       
-        <div className=" w-full mx-auto px-4 sm:px-6 lg:px-8">
-         
+        {/* <div className=" w-full mx-auto px-4 sm:px-6 lg:px-8">
+          */}
           <ProductsSection />
-        </div>
+        {/* </div> */}
       
 
       {/* Trust & Security */}

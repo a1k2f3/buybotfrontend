@@ -10,7 +10,8 @@ import { Star, Truck, Shield, Check } from "lucide-react";
 import ProductGallery from "@/components/card/ProductGallery";
 import ReviewsSection from "@/components/card/ReviewsSection";
 import ProductActions from "@/components/card/ProductActions";
-import ProductTabs from "@/components/card/ProductTabs"; // This one has 'use client'
+import ProductTabs from "@/components/card/ProductTabs";
+import AddReviewForm from "@/components/card/AddReviewForm"; // ← Client component
 
 async function getProduct(id: string) {
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -81,6 +82,11 @@ export default async function ProductPage({
               specifications={product.specifications}
               highlights={product.highlights}
             />
+
+            {/* Existing Reviews Section - moved here to keep flow logical on mobile */}
+            <div id="reviews" className="mt-12 lg:hidden">
+              <ReviewsSection reviews={product.reviews || []} rating={product.rating || 0} />
+            </div>
           </div>
 
           {/* Right Column */}
@@ -116,7 +122,7 @@ export default async function ProductPage({
               </div>
             </div>
 
-            {/* Size Selector - Keep as server-rendered for now (or move to client if interactive) */}
+            {/* Size Selector */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900">Select Size</h3>
               <div className="flex flex-wrap gap-3">
@@ -147,13 +153,21 @@ export default async function ProductPage({
                 <Check className="w-5 h-5 text-indigo-600" /><span>30-Day Returns</span>
               </div>
             </div>
+
+            {/* MOVED: Write a Review Form - now in the right column */}
+            <section className="mt-10 bg-white rounded-2xl shadow-sm p-8 border border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Write a Review</h2>
+              <AddReviewForm productId={product._id} />
+            </section>
+
+            {/* Reviews Section - visible on desktop in right column area, hidden on mobile (shown in left instead) */}
+            <div id="reviews" className="mt-12 hidden lg:block">
+              <ReviewsSection reviews={product.reviews || []} rating={product.rating || 0} />
+            </div>
           </div>
         </div>
 
-        <div id="reviews" className="mt-24">
-          <ReviewsSection reviews={product.reviews || []} rating={product.rating || 0} />
-        </div>
-
+        {/* Related Products */}
         {relatedProducts?.length > 0 && (
           <section className="mt-32">
             <h2 className="text-3xl font-bold mb-12">You May Also Like</h2>

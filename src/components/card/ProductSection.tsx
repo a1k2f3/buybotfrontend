@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import ProductCard from "./ProductCard";
 import { Loader2 } from "lucide-react";
@@ -38,24 +38,42 @@ interface Product {
 
 export default function ProductsSection() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const lastElementRef = useRef<HTMLDivElement>(null);
+
+  const fetchProducts = async (pageNum: number) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/random?limit=20&page=${pageNum}`
+      );
+
+      if (!res.ok) throw new Error("Failed to fetch products");
+
+      const data = await res.json();
+
+      if (data.success && data.data) {
+        return data.data;
+      } else {
+        throw new Error(data.error || "No products found");
+      }
+    } catch (err: any) {
+      throw err;
+    }
+  };
+
+  // Initial fetch
   useEffect(() => {
-    const fetchProducts = async () => {
+    const loadInitial = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/products/random`);
-
-        if (!res.ok) throw new Error("Failed to fetch products");
-
-        const data = await res.json();
-
-        if (data.success && data.data) {
-          setProducts(data.data);
-        } else {
-          throw new Error(data.error || "No products found");
-        }
+        const initialProducts = await fetchProducts(1);
+        setProducts(initialProducts);
+        setHasMore(initialProducts.length === 20);
       } catch (err: any) {
         console.error("Error fetching products:", err);
         setError(err.message || "Something went wrong");
@@ -64,8 +82,53 @@ export default function ProductsSection() {
       }
     };
 
-    fetchProducts();
+    loadInitial();
   }, []);
+
+  // Load more when page changes
+  useEffect(() => {
+    if (page === 1) return;
+
+    const loadMore = async () => {
+      setIsFetching(true);
+      try {
+        const moreProducts = await fetchProducts(page);
+        setProducts((prev) => [...prev, ...moreProducts]);
+        setHasMore(moreProducts.length === 20);
+      } catch (err: any) {
+        console.error("Error fetching more products:", err);
+        setHasMore(false);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    loadMore();
+  }, [page]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (loading || isFetching || !hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (lastElementRef.current) {
+      observer.observe(lastElementRef.current);
+    }
+
+    return () => {
+      if (lastElementRef.current) {
+        observer.unobserve(lastElementRef.current);
+      }
+    };
+  }, [loading, isFetching, hasMore]);
 
   // Loading State
   if (loading) {
@@ -95,7 +158,7 @@ export default function ProductsSection() {
   }
 
   return (
-    <section className="w-full md:px-12 lg:px-20  from-gray-50 ">
+    <section className="w-full md:px-12 lg:px-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -131,6 +194,16 @@ export default function ProductsSection() {
                 <ProductCard product={product} />
               </motion.div>
             ))}
+          </div>
+        )}
+
+        {/* Infinite Scroll Trigger */}
+        {hasMore && !isFetching && <div ref={lastElementRef} className="h-1 w-full" />}
+
+        {/* Loading More Indicator */}
+        {isFetching && (
+          <div className="flex justify-center py-8">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
           </div>
         )}
       </div>
