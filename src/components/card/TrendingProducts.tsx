@@ -56,7 +56,7 @@ export default function TrendingProducts({ limit = 12 }) {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+  <div className="w-full grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-10">
       {products.map((product: any) => (
         <Link
           key={product._id}
@@ -64,7 +64,7 @@ export default function TrendingProducts({ limit = 12 }) {
           className="group"
         >
           <div
-            className="relative bg-white rounded-lg overflow-hidden shadow hover:shadow-xl transition-all duration-300 cursor-pointer"
+            className=" rounded-lg overflow-hidden shadow hover:shadow-xl transition-all duration-300 cursor-pointer"
             onMouseEnter={() => setHoveredId(product._id)}
             onMouseLeave={() => setHoveredId(null)}
           >

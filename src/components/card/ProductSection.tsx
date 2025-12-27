@@ -95,7 +95,7 @@ export default function ProductsSection() {
   }
 
   return (
-    <section className="py-16 px-6 md:px-12 lg:px-20 bg-gradient-to-b from-gray-50 to-white">
+    <section className="w-full md:px-12 lg:px-20  from-gray-50 ">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -119,7 +119,7 @@ export default function ProductsSection() {
             <p className="text-gray-500 text-xl">No products available right now.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8">
             {products.map((product, index) => (
               <motion.div
                 key={product._id}
