@@ -26,10 +26,7 @@ const SignupForm: React.FC = () => {
             name: name,
             email: email,
             phone: phone, // phone is already a string
-            password: password,
-            // You may need to collect 'address' if the backend requires it, 
-            // but for now, I'll use a placeholder as per your example structure.
-            address: "N/A", 
+            password: password
         };
 
         try {
