@@ -52,7 +52,6 @@ const router =useRouter();
             router.push('/');
             
             // Redirect to dashboard or desired page
-            console.log("Login Success:", result);
             
             // TODO: In a real app, you would store the received token (result.token) 
             // in a cookie or local storage and redirect the user here.

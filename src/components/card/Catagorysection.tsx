@@ -26,15 +26,13 @@ export default function CategoriesSection() {
           cache: "no-store",
         });
 
-        console.log("Response Status:", response.status); // Debug
-
+        
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
 
         const result = await response.json();
-        console.log("Full API Response:", result); // See exactly what backend returns
-
+       
         if (result.success && Array.isArray(result.data)) {
           setCategories(result.data);
           setError(null);
