@@ -169,7 +169,7 @@ const router=useRouter()
                     {order.status}
                   </span>
                   <p className="mt-4 text-3xl font-extrabold text-gray-900">
-                    ₹{order.totalAmount.toLocaleString("en-IN")}
+                    RS{order.totalAmount.toLocaleString("en-IN")}
                   </p>
                 </div>
               </div>
@@ -211,7 +211,7 @@ const router=useRouter()
                       </span>
                     </p>
                     <p className="text-sm text-gray-600 mt-2">
-                      Quantity: <span className="font-bold">{item.quantity}</span> × ₹
+                      Quantity: <span className="font-bold">{item.quantity}</span> × RS
                       {item.price.toLocaleString("en-IN")}
                     </p>
                   </div>
@@ -219,7 +219,7 @@ const router=useRouter()
                   {/* Price */}
                   <div className="text-right sm:text-right">
                     <p className="text-2xl font-bold text-gray-900">
-                      ₹{(item.price * item.quantity).toLocaleString("en-IN")}
+                      RS{(item.price * item.quantity).toLocaleString("en-IN")}
                     </p>
                   </div>
                 </div>
