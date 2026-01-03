@@ -11,7 +11,7 @@ import ProductGallery from "@/components/card/ProductGallery";
 import ReviewsSection from "@/components/card/ReviewsSection";
 import ProductActions from "@/components/card/ProductActions";
 import ProductTabs from "@/components/card/ProductTabs";
-import AddReviewForm from "@/components/card/AddReviewForm"; // ← Client component
+import AddReviewForm from "@/components/card/AddReviewForm";
 
 async function getProduct(id: string) {
   const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -45,11 +45,12 @@ export default async function ProductPage({
     ...(product.images?.map((img: any) => ({ id: img._id, url: img.url })) || []),
   ];
 
-  const availableSizes = ["S", "M", "L", "XL", "XXL"];
+  // Dynamic sizes from API
+  const availableSizes = product.size || [];
 
   const descriptionPoints = product.description
     ? product.description
-        .split('\n')
+        .split('\r\n')
         .map((line: string) => line.trim())
         .filter((line: string) => line.length > 0)
         .map((line: string) => line.replace(/^[-•*]\s*/, '').trim())
@@ -83,7 +84,6 @@ export default async function ProductPage({
               highlights={product.highlights}
             />
 
-            {/* Existing Reviews Section - moved here to keep flow logical on mobile */}
             <div id="reviews" className="mt-12 lg:hidden">
               <ReviewsSection reviews={product.reviews || []} rating={product.rating || 0} />
             </div>
@@ -122,23 +122,25 @@ export default async function ProductPage({
               </div>
             </div>
 
-            {/* Size Selector */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Select Size</h3>
-              <div className="flex flex-wrap gap-3">
-                {availableSizes.map((size) => (
-                  <button
-                    key={size}
-                    className="w-14 h-14 border-2 border-gray-300 rounded-lg font-medium text-gray-700 hover:border-indigo-600 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                  >
-                    {size}
-                  </button>
-                ))}
+            {/* === ONLY SHOW SIZE SELECTOR IF SIZES EXIST === */}
+            {availableSizes.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900">Select Size</h3>
+                <div className="flex flex-wrap gap-3">
+                  {availableSizes.map((size: string) => (
+                    <button
+                      key={size}
+                      className="w-14 h-14 border-2 border-gray-300 rounded-lg font-medium text-gray-700 hover:border-indigo-600 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-500">
+                  Need help? <Link href="/size-guide" className="text-indigo-600 hover:underline">View size guide</Link>
+                </p>
               </div>
-              <p className="text-sm text-gray-500">
-                Need help? <Link href="/size-guide" className="text-indigo-600 hover:underline">View size guide</Link>
-              </p>
-            </div>
+            )}
 
             <ProductActions product={product} />
 
@@ -154,13 +156,11 @@ export default async function ProductPage({
               </div>
             </div>
 
-            {/* MOVED: Write a Review Form - now in the right column */}
             <section className="mt-10 bg-white rounded-2xl shadow-sm p-8 border border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Write a Review</h2>
               <AddReviewForm productId={product._id} />
             </section>
 
-            {/* Reviews Section - visible on desktop in right column area, hidden on mobile (shown in left instead) */}
             <div id="reviews" className="mt-12 hidden lg:block">
               <ReviewsSection reviews={product.reviews || []} rating={product.rating || 0} />
             </div>
@@ -173,12 +173,19 @@ export default async function ProductPage({
             <h2 className="text-3xl font-bold mb-12">You May Also Like</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {relatedProducts.map((item: any) => (
-                <Link key={item._id} href={`/products/${item.slug || item._id}`} className="group block bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+                <Link key={item._id} href={`/product/${item._id}`} className="group block bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
                   <div className="relative aspect-square overflow-hidden bg-gray-100">
-                    <Image src={item.thumbnail} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <Image
+                      src={item.thumbnail}
+                      alt={item.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
                   </div>
                   <div className="p-5">
-                    <h3 className="font-medium text-gray-800 line-clamp-2 group-hover:text-indigo-600">{item.name}</h3>
+                    <h3 className="font-medium text-gray-800 line-clamp-2 group-hover:text-indigo-600">
+                      {item.name}
+                    </h3>
                     <p className="text-indigo-600 font-bold mt-3 text-lg">
                       {item.price.toLocaleString()} {item.currency || "RS"}
                     </p>

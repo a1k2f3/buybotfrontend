@@ -27,7 +27,9 @@ export default function ProductGallery({
             src={activeImage}
             alt={productName}
             fill
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-150"
+            sizes="150vw" // Forces higher-res loading for zoom
+            quality={95} // Sharper quality
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-150 crisp-scale"
             priority
           />
         </div>
@@ -52,7 +54,7 @@ export default function ProductGallery({
             >
               <Image
                 src={img.url}
-                alt="Thumbnail"
+                alt={`${productName} thumbnail`}
                 fill
                 className="object-cover"
               />
