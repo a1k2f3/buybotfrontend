@@ -66,7 +66,7 @@ const router=useRouter()
         name: item.productId.name,
         price: item.productId.price,
         quantity: item.quantity,
-        image: item.productId.image || "/api/placeholder/400/400",
+        image: item.productId.thumbnail || "/api/placeholder/400/400",
         inStock: item.productId.inStock ?? true,
       }));
 
