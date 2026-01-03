@@ -21,6 +21,7 @@ interface CartItem {
   name: string;
   price: number;
   quantity: number;
+  size?: string; // Made optional
   image: string;
   storeId: string;
   inStock: boolean;
@@ -78,8 +79,8 @@ export default function CheckoutPage() {
     setLoading(true);
     const token = getToken();
     const userID = getUserId();
-console.log("UserID in fetchCart:", userID);
-console.log("Token in fetchCart:", token);
+    console.log("UserID in fetchCart:", userID);
+    console.log("Token in fetchCart:", token);
     if (!token || !userID) {
       setError("Please login to proceed with checkout");
       setLoading(false);
@@ -96,11 +97,12 @@ console.log("Token in fetchCart:", token);
 
       if (!response.ok) throw new Error("Failed to fetch cart");
       const data = await response.json();
-console.log("Cart Data:", data);
+      console.log("Cart Data:", data);
       const populatedItems: CartItem[] = data.items.map((item: any) => ({
         id: item.productId._id.toString(),
         name: item.productId.name,
         price: item.productId.price,
+        size: item.size || undefined, // Explicitly optional
         quantity: item.quantity,
         storeId: item.storeId || "",
         image: item.productId.thumbnail || "/api/placeholder/400/400",
@@ -301,12 +303,12 @@ console.log("Cart Data:", data);
         },
         body: JSON.stringify(payload),
       });
-
+console.log("Order Response:", response);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to create order");
       }
-console.log(response);
+      console.log("order,response",response);
       router.push("/shop/order-success");
     } catch (err: any) {
       setError(err.message || "Something went wrong");
@@ -459,8 +461,6 @@ console.log(response);
                 <h2 className="text-2xl font-bold mb-6">Choose Payment Method</h2>
                 <div className="space-y-4">
                   {[
-                   
-              
                     { id: "cod", label: "Cash on Delivery", icon: Wallet },
                   ].map((method) => {
                     const Icon = method.icon;
@@ -567,6 +567,7 @@ console.log(response);
                     </div>
                     <div className="flex-1">
                       <h4 className="font-medium line-clamp-2">{item.name}</h4>
+                      {item.size && <p className="text-gray-600">Size: {item.size}</p>}
                       <p className="text-gray-600">Qty: {item.quantity}</p>
                       <p className="font-bold text-indigo-600">RS{(item.price * item.quantity).toLocaleString("en-IN")}</p>
                     </div>

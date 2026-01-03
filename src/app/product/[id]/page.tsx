@@ -1,6 +1,5 @@
 // app/products/[id]/page.tsx
-// ← MUST NOT have 'use client' here!
-// ← This is a SERVER COMPONENT (async is allowed)
+// SERVER COMPONENT – no 'use client'
 
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +8,7 @@ import { Star, Truck, Shield, Check } from "lucide-react";
 
 import ProductGallery from "@/components/card/ProductGallery";
 import ReviewsSection from "@/components/card/ReviewsSection";
-import ProductActions from "@/components/card/ProductActions";
+import ProductActions from "@/components/card/ProductActions"; // Client component
 import ProductTabs from "@/components/card/ProductTabs";
 import AddReviewForm from "@/components/card/AddReviewForm";
 
@@ -46,7 +45,7 @@ export default async function ProductPage({
   ];
 
   // Dynamic sizes from API
-  const availableSizes = product.size || [];
+  const availableSizes: string[] = Array.isArray(product.size) ? product.size : [];
 
   const descriptionPoints = product.description
     ? product.description
@@ -122,27 +121,38 @@ export default async function ProductPage({
               </div>
             </div>
 
-            {/* === ONLY SHOW SIZE SELECTOR IF SIZES EXIST === */}
-            {availableSizes.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Select Size</h3>
-                <div className="flex flex-wrap gap-3">
-                  {availableSizes.map((size: string) => (
-                    <button
-                      key={size}
-                      className="w-14 h-14 border-2 border-gray-300 rounded-lg font-medium text-gray-700 hover:border-indigo-600 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                    >
-                      {size}
-                    </button>
-                  ))}
+            {/* Form to capture selected size and pass it to ProductActions */}
+            <form id="product-form" className="space-y-8">
+              {/* Only show size selector if sizes exist */}
+              {availableSizes.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Select Size</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {availableSizes.map((size, index) => (
+                      <label key={size} className="cursor-pointer">
+                        <input
+                          type="radio"
+                          name="selectedSize"
+                          value={size}
+                          className="sr-only peer"
+                          defaultChecked={index === 0} // First size pre-selected
+                          required
+                        />
+                        <div className="px-6 py-3 border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white peer-checked:border-indigo-600 peer-checked:text-indigo-600 peer-checked:bg-indigo-50 transition-all hover:border-indigo-400">
+                          {size}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-                {/* <p className="text-sm text-gray-500">
-                  Need help? <Link href="/size-guide" className="text-indigo-600 hover:underline">View size guide</Link>
-                </p> */}
-              </div>
-            )}
+              )}
 
-            <ProductActions product={product} />
+              {/* ProductActions receives the form ID to read selectedSize */}
+              <ProductActions product={product} formId="product-form" />
+            </form>
+
+            {/* If no sizes → ProductActions still works (no size needed) */}
+            {availableSizes.length === 0 && <ProductActions product={product} />}
 
             <div className="flex flex-wrap gap-6 pt-8 border-t border-gray-200">
               <div className="flex items-center gap-3 text-sm text-gray-600">
@@ -173,7 +183,7 @@ export default async function ProductPage({
             <h2 className="text-3xl font-bold mb-12">You May Also Like</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {relatedProducts.map((item: any) => (
-                <Link key={item._id} href={`/product/${item._id}`} className="group block bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+                <Link key={item._id} href={`/products/${item._id}`} className="group block bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
                   <div className="relative aspect-square overflow-hidden bg-gray-100">
                     <Image
                       src={item.thumbnail}

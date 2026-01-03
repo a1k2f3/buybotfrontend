@@ -24,6 +24,7 @@ interface OrderItem {
   productId: Product | null;
   storeId: Store | null;
   quantity: number;
+  size:string
   price: number;
   _id: string;
 }
@@ -213,7 +214,7 @@ export default function OrderHistory() {
                       {order.status}
                     </span>
                     <p className="mt-4 text-3xl font-extrabold text-gray-900">
-                      ₹{order.totalAmount.toLocaleString("en-IN")}
+                      RS{order.totalAmount.toLocaleString("en-IN")}
                     </p>
                   </div>
                 </div>
@@ -284,6 +285,10 @@ export default function OrderHistory() {
                             {item.storeId?.name || "Unknown Store"}
                           </span>
                         </p>
+                      {item.size && (
+                        <p className="text-sm text-gray-600 mt-2">
+                          Size: <span className="font-bold">{item.size}</span>
+                        </p>)}
                         <p className="text-sm text-gray-600 mt-2">
                           Quantity: <span className="font-bold">{item.quantity}</span> × RS
                           {item.price.toLocaleString("en-IN")}

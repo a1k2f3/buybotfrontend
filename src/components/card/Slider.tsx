@@ -5,9 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import MainSection from "./HeroSection";
 import { slides } from "./data/slides";
-export default function Slider() {
-  
 
+export default function BabaganOnlineSlider() {
   const [current, setCurrent] = useState(0);
 
   // Auto-slide every 5 seconds
@@ -15,9 +14,9 @@ export default function Slider() {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 5000);
+
     return () => clearInterval(interval);
-  }, []); // ✅ no dependency needed here
-  
+  }, []); // Empty dep array is perfect here
 
   return (
     <div className="relative w-full overflow-hidden">
@@ -35,15 +34,18 @@ export default function Slider() {
       </AnimatePresence>
 
       {/* Navigation Dots */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-3">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrent(index)}
-            className={`w-3 h-3 rounded-full transition-all ${
-              current === index ? "bg-blue-600 scale-125" : "bg-gray-300"
+            aria-label={`Go to slide ${index + 1}`}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              current === index
+                ? "bg-blue-600 scale-125"
+                : "bg-gray-400 hover:bg-gray-500"
             }`}
-          ></button>
+          />
         ))}
       </div>
     </div>

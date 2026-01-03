@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "BUYBOT",
+  title: "BabaGaniOnline - Shop Smarter us",
   description: "The best ecommerce website",
 };
 

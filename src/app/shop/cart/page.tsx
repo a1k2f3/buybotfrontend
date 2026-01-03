@@ -12,6 +12,7 @@ interface CartItem {
   id: string;
   name: string;
   price: number;
+  size?:string;
   quantity: number;
   image: string;
   inStock: boolean;
@@ -63,6 +64,7 @@ const router=useRouter()
       // Map to frontend CartItem format
       const populatedItems: CartItem[] = data.items.map((item: any) => ({
         id: item.productId._id.toString(),
+        size:item.size,
         name: item.productId.name,
         price: item.productId.price,
         quantity: item.quantity,
@@ -251,9 +253,11 @@ const router=useRouter()
                     {item.name}
                   </h3>
                   <p className="text-2xl font-bold text-indigo-600 mt-2">
-                    ₹{item.price.toLocaleString("en-IN")}
+                    RS{item.price.toLocaleString("en-IN")}
                   </p>
-
+                  {item.size && (
+                    <p className="text-gray-600 mt-1">Size: {item.size}</p>
+                  )}
                   <div className="flex items-center gap-4 mt-4">
                     <div className="flex items-center border border-gray-300 rounded-lg">
                       <button
@@ -298,12 +302,12 @@ const router=useRouter()
 
                 <div className="flex justify-between text-green-600 font-bold">
                   <span>Discount {coupon === "SAVE10" ? "(SAVE10)" : ""}</span>
-                  <span>-₹{discount.toLocaleString("en-IN")}</span>
+                  <span>-RS{discount.toLocaleString("en-IN")}</span>
                 </div>
 
                 <div className="flex justify-between text-lg font-bold text-gray-900 border-t pt-4">
                   <span>Total</span>
-                  <span className="text-2xl text-indigo-600">₹{total.toLocaleString("en-IN")}</span>
+                  <span className="text-2xl text-indigo-600">RS{total.toLocaleString("en-IN")}</span>
                 </div>
 
                 {/* Coupon */}
