@@ -82,9 +82,9 @@ console.log("ehuh",product.brand?._id || "")
           {loading ? 'Adding...' : 'Add to Cart'}
         </button>
 
-        <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-lg hover:shadow-xl transition">
+        {/* <button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-lg hover:shadow-xl transition">
           Buy Now
-        </button>
+        </button> */}
       </div>
 
       {error && <p className="text-red-500 text-center">{error}</p>}
