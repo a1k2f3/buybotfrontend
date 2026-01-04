@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from "react";
-import { ShoppingCart, Heart, Share2, Copy, Shield, Truck, Check } from "lucide-react";
 
+import { ShoppingCart, Heart, Share2, Copy, Shield, Truck, Check } from "lucide-react";
+import {useRouter} from "next/navigation";
 export default function ProductActions({ product, formId }: { product: any; formId?: string }) {
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
@@ -12,7 +13,7 @@ export default function ProductActions({ product, formId }: { product: any; form
 
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareText = `Check out ${product.name} - Only ${product.price} RS!`;
-
+  const router = useRouter();
   const handleAddToCart = async () => {
     setLoading(true);
     setError(null);
@@ -42,7 +43,9 @@ export default function ProductActions({ product, formId }: { product: any; form
     const userID = localStorage.getItem("UserId")?.replace(/"/g, "");
 
     if (!token || !userID) {
-      setError("Please login to add to cart");
+      router.push("/auth/login");
+      // setError("Please login to add to cart");
+
       setLoading(false);
       return;
     }
