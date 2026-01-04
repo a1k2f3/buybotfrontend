@@ -152,7 +152,7 @@ export default async function ProductPage({
             </form>
 
             {/* If no sizes → ProductActions still works (no size needed) */}
-            {availableSizes.length === 0 && <ProductActions product={product} />}
+            {availableSizes.length === 0 }
 
             <div className="flex flex-wrap gap-6 pt-8 border-t border-gray-200">
               <div className="flex items-center gap-3 text-sm text-gray-600">
