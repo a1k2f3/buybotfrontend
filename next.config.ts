@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['res.cloudinary.com'], // add Cloudinary domain here
   },
+  experimental: {
+    webpackMemoryOptimizations: true,
+  },
   eslint: {
     // This removes the info message completely
     ignoreDuringBuilds: true,
