@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React from "react";
 
 export default function Footer() {
@@ -23,10 +24,10 @@ export default function Footer() {
         <div>
           <h4 className="text-lg font-semibold text-white mb-4">For Customers</h4>
           <ul className="space-y-2 text-sm">
-            <li><a href="/browse" className="hover:text-blue-300 transition">Browse Products</a></li>
-            <li><a href="/how-it-works" className="hover:text-blue-300 transition">How It Works</a></li>
-            <li><a href="/support" className="hover:text-blue-300 transition">Customer Support</a></li>
-            <li><a href="/faq" className="hover:text-blue-300 transition">FAQ</a></li>
+            <li><Link href="/browse" className="hover:text-blue-300 transition">Browse Products</Link></li>
+           
+            <li><Link href="/support/contact" className="hover:text-blue-300 transition">Customer Support</Link></li>
+            <li><Link href="/support/faq" className="hover:text-blue-300 transition">FAQ</Link></li>
           </ul>
         </div>
 
@@ -34,10 +35,10 @@ export default function Footer() {
         <div>
           <h4 className="text-lg font-semibold text-white mb-4">For Vendors</h4>
           <ul className="space-y-2 text-sm">
-            <li><a href="/sell" className="hover:text-blue-300 transition">Start Selling</a></li>
-            <li><a href="/vendor-dashboard" className="hover:text-blue-300 transition">Vendor Dashboard</a></li>
-            <li><a href="/pricing" className="hover:text-blue-300 transition">Pricing Plans</a></li>
-            <li><a href="/vendor-resources" className="hover:text-blue-300 transition">Resources</a></li>
+            <li><Link href="/sell" className="hover:text-blue-300 transition">Start Selling</Link></li>
+            
+            <li><Link href="/pricing" className="hover:text-blue-300 transition">Pricing Plans</Link></li>
+            <li><Link href="/support/contact" className="hover:text-blue-300 transition">Resources</Link></li>
           </ul>
         </div>
 
@@ -45,12 +46,12 @@ export default function Footer() {
         <div className="space-y-4">
           <div>
             <h4 className="text-lg font-semibold text-white mb-4">Connect With Us</h4>
-            <p className="text-sm mb-2">Email: support@buybot.com</p>
-            <p className="text-sm">Phone: +1 (555) 123-4567</p>
+            <p className="text-sm mb-2"><Link href={'/support/contact'}>Contact Us</Link></p>
+            
           </div>
 
           {/* Social Icons */}
-          <div className="flex space-x-4">
+          {/* <div className="flex space-x-4">
             <a href="#" aria-label="Facebook" className="hover:text-blue-300">
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
             </a>
@@ -63,17 +64,17 @@ export default function Footer() {
             <a href="#" aria-label="LinkedIn" className="hover:text-blue-300">
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.164 0-2.107-.943-2.107-2.107 0-1.164.943-2.107 2.107-2.107 1.164 0 2.107.943 2.107 2.107 0 1.164-.943 2.107-2.107 2.107zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.226.792 24 1.771 24h20.454c.979 0 1.773-.774 1.773-1.729V1.729C24 .774 23.206 0 22.225 0z"/></svg>
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
 
       {/* Bottom Bar */}
       <div className="mt-10 pt-8 border-t border-blue-800 text-center text-sm">
         <p>
-          © {currentYear} <span className="font-semibold text-blue-300">BuyBot</span>. All rights reserved. 
+          © {currentYear} <span className="font-semibold text-blue-300">BabaGaniOnline</span>. All rights reserved. 
           <span className="ml-4">
-            <a href="/privacy" className="hover:text-blue-300 mx-2">Privacy Policy</a> | 
-            <a href="/terms" className="hover:text-blue-300 mx-2">Terms of Service</a>
+            <Link href="/static/privacy-policy" className="hover:text-blue-300 mx-2">Privacy Policy</Link> | 
+            <Link href="/static/terms" className="hover:text-blue-300 mx-2">Terms of Service</Link>
           </span>
         </p>
       </div>

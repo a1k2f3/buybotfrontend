@@ -35,7 +35,6 @@ if(!token){
          try {
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/${userId}`);
           const data = await res.json();
-console.log("Fetched user data:", data);
           // Add fallback image since backend doesn't store image
           setUser({
             ...data,
@@ -46,7 +45,6 @@ console.log("Fetched user data:", data);
         }
       }
 
-console.log("Clean User ID:", userId);
       if (!userId) {
         console.log("No user ID found");
         return;
@@ -93,9 +91,9 @@ router.push('/auth/login');
             {user?.phone}
           </p>
 
-          <p className="text-gray-500">
+          {/* <p className="text-gray-500">
             {user?.address}
-          </p>
+          </p> */}
 
         </div>
 
@@ -109,21 +107,21 @@ router.push('/auth/login');
             </div>
           </Link>
 
-          <Link href="/profile/settings" className="flex items-center gap-4 bg-blue-50 hover:bg-blue-100 transition-all p-5 rounded-xl shadow-sm">
+          {/* <Link href="/profile/settings" className="flex items-center gap-4 bg-blue-50 hover:bg-blue-100 transition-all p-5 rounded-xl shadow-sm">
             <FaCog className="text-blue-600 text-2xl" />
             <div>
               <h3 className="text-lg font-medium text-gray-800">Settings</h3>
               <p className="text-sm text-gray-500">Manage your preferences</p>
             </div>
-          </Link>
+          </Link> */}
 
-          <Link href="/profile/reviews" className="flex items-center gap-4 bg-blue-50 hover:bg-blue-100 transition-all p-5 rounded-xl shadow-sm">
+          {/* <Link href="/profile/reviews" className="flex items-center gap-4 bg-blue-50 hover:bg-blue-100 transition-all p-5 rounded-xl shadow-sm">
             <FaStar className="text-blue-600 text-2xl" />
             <div>
               <h3 className="text-lg font-medium text-gray-800">My Reviews</h3>
               <p className="text-sm text-gray-500">See your feedback and ratings</p>
             </div>
-          </Link>
+          </Link> */}
 
           <Link href="/profile/wishlist" className="flex items-center gap-4 bg-blue-50 hover:bg-blue-100 transition-all p-5 rounded-xl shadow-sm">
             <FaHeart className="text-blue-600 text-2xl" />

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar/Navbar";
+import Footer from "@/components/card/Footer";
 // import BottomNavbar from "@/components/ui/BottomNavbar";
 
 // Use Inter – 100% stable, looks almost exactly like Geist
@@ -29,6 +30,7 @@ export default function RootLayout({
         <main className="min-h-screen pt-16 pb-20 lg:pb-0">
           {children}
         </main>
+         <Footer />
         {/* <BottomNavbar /> */}
       </body>
     </html>
