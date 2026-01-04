@@ -71,6 +71,7 @@ const router=useRouter()
         image: item.productId.thumbnail || "/api/placeholder/400/400",
         inStock: item.productId.inStock ?? true,
       }));
+      console.log()
 
       setItems(populatedItems);
     } catch (err: any) {
