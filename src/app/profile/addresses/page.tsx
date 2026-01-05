@@ -1,4 +1,7 @@
 "use client";
+
+export const dynamic = "force-dynamic";
+
 import React, { useEffect, useState } from 'react';
 
 // Define the Address type (adjust if you have it elsewhere)

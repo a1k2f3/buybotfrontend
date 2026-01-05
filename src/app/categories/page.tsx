@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import CategoryCard from "@/components/card/CatagoryCard";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";

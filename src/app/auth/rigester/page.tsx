@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Logo from '@/components/forms/logo'
 import SignupForm from '@/components/forms/Signupform'
 import React from 'react'

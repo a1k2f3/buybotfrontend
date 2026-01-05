@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = "force-dynamic";
+
 import React from 'react';
 import { FileText, Shield, Truck, CreditCard, Ban, Gavel, Mail } from 'lucide-react';
 

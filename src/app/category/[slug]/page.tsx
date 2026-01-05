@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { useState, useEffect } from "react";
 import { use } from "react";  // ← Add this import
 import { Package, ArrowLeft, Grid3X3, List, Loader2 } from "lucide-react";
+export const dynamic = "force-dynamic";
 
 const API_BASE = "https://buybotbackend-production.up.railway.app";
 

@@ -1,6 +1,8 @@
 // app/profile/edit/page.tsx
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Loader2, CheckCircle } from "lucide-react";

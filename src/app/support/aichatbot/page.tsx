@@ -1,6 +1,8 @@
 // app/support/page.tsx (or wherever your chat support page is)
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import React from "react";
 import { motion } from "framer-motion";
 import { MessageCircle, Headphones, Mail, Bot, Sparkles, Clock, Shield } from "lucide-react";

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Suspense } from "react";
 import SearchResultsClient from "../../components/Search/Searchpage";
 
