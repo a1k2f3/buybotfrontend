@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 import Logo from '@/components/forms/logo'
 import SignupForm from '@/components/forms/Signupform'

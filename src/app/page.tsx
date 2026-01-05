@@ -1,6 +1,7 @@
 "use client";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 import Slider from "@/components/card/Slider"; // Hero slider with deals
 import DealsSection from "@/components/card/DealsSection"; // New: Flash sales/deals

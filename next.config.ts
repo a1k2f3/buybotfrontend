@@ -7,22 +7,29 @@ const nextConfig: NextConfig = {
 
   images: {
     domains: ["res.cloudinary.com"],
-    unoptimized: true,
   },
 
   eslint: {
     ignoreDuringBuilds: true,
   },
 
+  swcMinify: false,
+
   experimental: {
     workerThreads: false,
     cpus: 1,
-    webpackMemoryOptimizations: true,
   },
 
   webpack: (config) => {
     config.cache = false;
     config.parallelism = 1;
+
+    // reduce memory usage
+    config.optimization = {
+      ...config.optimization,
+      minimize: false,
+    };
+
     return config;
   },
 };

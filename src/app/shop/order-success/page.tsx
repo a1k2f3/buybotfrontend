@@ -3,6 +3,7 @@
 "use client";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 import React, { useEffect } from "react";
 import Link from "next/link";

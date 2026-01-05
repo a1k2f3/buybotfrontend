@@ -1,7 +1,8 @@
-export const dynamic = "force-dynamic";
-
 import { Suspense } from "react";
 import SearchResultsClient from "../../components/Search/Searchpage";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default function SearchResultsPage() {
   return (
