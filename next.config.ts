@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  reactStrictMode: false, // IMPORTANT for low-memory servers
+  reactStrictMode: false,
 
   productionBrowserSourceMaps: false,
 
   images: {
     domains: ["res.cloudinary.com"],
-    unoptimized: true, // 🔥 CRITICAL FIX
+    unoptimized: true,
   },
 
   eslint: {
@@ -15,16 +15,14 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
+    workerThreads: false,
+    cpus: 1,
     webpackMemoryOptimizations: true,
-    workerThreads: false, // 🔥 STOP parallel workers
-    cpus: 1,              // 🔥 LIMIT CPU usage
   },
 
   webpack: (config) => {
-    config.cache = false; // 🔥 reduce memory spikes
-    // Disable heavy minimization during server build to avoid OOM on low-memory hosts
-    config.optimization = config.optimization || {};
-    config.optimization.minimize = false;
+    config.cache = false;
+    config.parallelism = 1;
     return config;
   },
 };
