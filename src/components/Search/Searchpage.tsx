@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +29,8 @@ interface SearchResponse {
   data: Product[];
 }
 
-export default function SearchResultsClient() {
+// Inner component — this is the only part that uses useSearchParams()
+function SearchResultsContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -127,7 +129,6 @@ export default function SearchResultsClient() {
               {results.map((product) => (
                 <Link key={product._id} href={`/product/${product._id}`} className="group block">
                   <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100">
-                    {/* Image Container */}
                     <div className="relative aspect-square bg-gray-50 overflow-hidden">
                       <Image
                         src={product.thumbnail}
@@ -136,10 +137,9 @@ export default function SearchResultsClient() {
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover group-hover:scale-110 transition-transform duration-700"
                         placeholder="blur"
-                        blurDataURL="/images/placeholder.jpg" // optional low-res placeholder
+                        blurDataURL="/images/placeholder.jpg"
                       />
 
-                      {/* Stock Badges */}
                       {product.stock === 0 && (
                         <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                           <span className="text-white text-xl font-bold">Out of Stock</span>
@@ -152,7 +152,6 @@ export default function SearchResultsClient() {
                       )}
                     </div>
 
-                    {/* Card Content */}
                     <div className="p-6">
                       <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 group-hover:text-indigo-600 transition-colors duration-300">
                         {product.name}
@@ -168,7 +167,6 @@ export default function SearchResultsClient() {
 
                       <p className="text-gray-600 text-sm mt-3 line-clamp-2">{product.description}</p>
 
-                      {/* Tags */}
                       {product.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-4">
                           {product.tags.slice(0, 3).map((tag, i) => (
@@ -191,7 +189,6 @@ export default function SearchResultsClient() {
                         </div>
                       )}
 
-                      {/* Price */}
                       <div className="mt-6 flex items-center justify-between">
                         <p className="text-2xl font-bold text-indigo-600 group-hover:text-indigo-700 transition-colors">
                           {product.currency} {product.price.toLocaleString()}
@@ -203,7 +200,7 @@ export default function SearchResultsClient() {
               ))}
             </div>
 
-            {/* Enhanced Pagination */}
+            {/* Pagination */}
             {totalPages > 1 && (
               <nav className="flex justify-center items-center gap-2 mt-16">
                 <button
@@ -260,5 +257,23 @@ export default function SearchResultsClient() {
         )}
       </div>
     </div>
+  );
+}
+
+// Main exported component — wraps the content in Suspense
+export default function SearchResultsClient() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="flex flex-col items-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-600 mb-6" />
+            <p className="text-xl text-gray-600">Searching products...</p>
+          </div>
+        </div>
+      }
+    >
+      <SearchResultsContent />
+    </Suspense>
   );
 }

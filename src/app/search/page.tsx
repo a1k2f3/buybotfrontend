@@ -1,8 +1,7 @@
 import { Suspense } from "react";
-import SearchResultsClient from "@/components/Search/Searchpage"; // adjust path if needed
+import SearchResultsClient from "@/components/Search/Searchpage";
 
 export const dynamic = "force-dynamic";
-// export const revalidate = 60; // optional
 
 export default function SearchResultsPage() {
   return (
