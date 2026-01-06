@@ -3,26 +3,24 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { use } from "react";  // ← Add this import
 import { Package, ArrowLeft, Grid3X3, List, Loader2 } from "lucide-react";
-export const dynamic = "force-dynamic";
-export const revalidate = 60;
 
-const API_BASE = "https://buybotbackend-production.up.railway.app";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 interface Product {
   _id: string;
   name: string;
+  slug: string;
   price: number;
   discountPrice: number | null;
   thumbnail: string;
   images: { url: string }[];
-  reviews: { rating: number }[];
+  rating?: number;
   stock: number;
   status: string;
-  category: { name: string };
+  category: { name: string; slug: string };
 }
 
 interface CategoryData {
@@ -32,14 +30,16 @@ interface CategoryData {
   imageUrl?: string;
 }
 
-// Change the props type: params is now a Promise
-export default function CategoryPage({
+// FIXED: Correct type for params in Next.js 14+ App Router (Client Component)
+export default async function CategoryPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  // Unwrap the promise synchronously in this client component
-  const { slug } = use(params);
+  const router = useRouter();
+
+  // Await params directly since the component is now async
+  const { slug } = await params;
 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [products, setProducts] = useState<Product[]>([]);
@@ -53,71 +53,253 @@ export default function CategoryPage({
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`${API_BASE}/api/products/category/${slug}`);
+        const response = await fetch(
+          `${API_BASE}/api/products/category/${encodeURIComponent(slug)}`
+        );
 
         if (!response.ok) {
-          if (response.status === 404) notFound();
-          throw new Error("Failed to fetch products");
+          if (response.status === 404) {
+            router.replace("/404");
+            return;
+          }
+          throw new Error(`Failed to fetch products: ${response.status}`);
         }
 
         const data = await response.json();
-        const productsData: Product[] = Array.isArray(data) ? data : data.products || data.data || [];
 
-        const categoryInfo = {
-          name: productsData[0]?.category?.name || slug.replace(/-/g, " ").toUpperCase(),
-          productCount: productsData.length,
-          description: "Explore the latest products in this category.",
-          imageUrl: productsData[0]?.images[0]?.url || "/images/fallback-category.jpg",
-        };
+        let productsData: Product[] = [];
+        if (Array.isArray(data)) {
+          productsData = data;
+        } else if (data.data) {
+          productsData = data.data;
+        } else if (data.products) {
+          productsData = data.products;
+        }
 
-        setProducts(productsData);
-        setCategory(categoryInfo);
-      } catch (err: any) {
-        console.error("Error fetching category:", err);
-        setError("Failed to load products. Please try again later.");
+        const activeProducts = productsData.filter(
+          (p) => p.status === "active" && p.stock > 0
+        );
+
+        const fallbackName = slug
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase());
+
+        if (activeProducts.length === 0) {
+          setProducts([]);
+          setCategory({
+            name: fallbackName,
+            productCount: 0,
+            description: "No products available in this category at the moment.",
+            imageUrl: "/images/fallback-category.jpg",
+          });
+          return;
+        }
+
+        const categoryName =
+          activeProducts[0].category?.name || fallbackName;
+
+        setProducts(activeProducts);
         setCategory({
-          name: slug.replace(/-/g, " ").toUpperCase(),
-          productCount: 0,
-          description: "Category not found.",
+          name: categoryName,
+          productCount: activeProducts.length,
+          description: `Discover ${activeProducts.length} amazing products in ${categoryName}.`,
+          imageUrl:
+            activeProducts[0]?.thumbnail ||
+            activeProducts[0]?.images[0]?.url ||
+            "/images/fallback-category.jpg",
         });
+      } catch (err: any) {
+        console.error("Error fetching category products:", err);
+        setError("Failed to load products. Please try again later.");
         setProducts([]);
+        const fallbackName = slug
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase());
+        setCategory({
+          name: fallbackName,
+          productCount: 0,
+          description: "Category temporarily unavailable.",
+        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchCategoryProducts();
-  }, [slug]);
+  }, [slug, router]);
 
-  // ... rest of your component remains exactly the same
+  // Loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mx-auto" />
-          <p className="mt-4 text-gray-600">Loading products...</p>
+          <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
+          <p className="text-lg text-gray-600">Loading products...</p>
         </div>
       </div>
     );
   }
 
-  if (error || !category) {
+  // Empty or error state
+  if (error || !category || products.length === 0) {
+    const displayName = category?.name || slug
+      .replace(/-/g, " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Package className="w-20 h-20 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-800">Oops!</h2>
-          <p className="text-gray-600 mt-2">{error || "Category not found"}</p>
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-16">
+            <Package className="w-24 h-24 text-gray-300 mx-auto mb-6" />
+            <h1 className="text-4xl font-bold text-gray-900 capitalize">
+              {displayName}
+            </h1>
+            <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
+              {error || category?.description || "No products found in this category."}
+            </p>
+            <Link
+              href="/"
+              className="mt-8 inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Back to Home
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
-  const displayedProducts = products.filter(p => p.status === "active" && p.stock > 0);
-
+  // Main content
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ... the rest of your JSX unchanged ... */}
+      {/* Hero Banner */}
+      <div className="relative h-96 bg-gradient-to-b from-indigo-100 to-gray-50 overflow-hidden">
+        <Image
+          src={category.imageUrl || "/images/fallback-category.jpg"}
+          alt={category.name}
+          fill
+          className="object-cover opacity-40"
+          unoptimized
+        />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+          <div>
+            <h1 className="text-5xl font-bold text-white capitalize">{category.name}</h1>
+            <p className="mt-3 text-xl text-white/90">
+              {category.productCount} {category.productCount === 1 ? "product" : "products"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Products Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <p className="text-gray-600">
+            Showing {products.length} {products.length === 1 ? "product" : "products"}
+          </p>
+
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">View:</span>
+            <div className="flex rounded-lg border border-gray-300 overflow-hidden">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-3 transition ${
+                  viewMode === "grid"
+                    ? "bg-indigo-600 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+                aria-label="Grid view"
+              >
+                <Grid3X3 className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-3 transition ${
+                  viewMode === "list"
+                    ? "bg-indigo-600 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+                aria-label="List view"
+              >
+                <List className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <motion.div
+          layout
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              : "grid grid-cols-1 gap-6"
+          }
+        >
+          {products.map((product) => (
+            <motion.div
+              key={product._id}
+              layout
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className={`bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow overflow-hidden ${
+                viewMode === "list" ? "flex" : ""
+              }`}
+            >
+              <Link href={`/product/${product.slug}`}>
+                <div className={`relative ${viewMode === "grid" ? "aspect-square" : "w-64"}`}>
+                  <Image
+                    src={
+                      product.thumbnail ||
+                      product.images[0]?.url ||
+                      "/images/placeholder.jpg"
+                    }
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                  {product.discountPrice && (
+                    <span className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      SALE
+                    </span>
+                  )}
+                </div>
+                <div className="p-6 flex-1">
+                  <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">
+                    {product.name}
+                  </h3>
+                  <div className="mt-3 flex items-center justify-between">
+                    <div>
+                      {product.discountPrice ? (
+                        <>
+                          <span className="text-2xl font-bold text-indigo-600">
+                            ${product.discountPrice}
+                          </span>
+                          <span className="ml-2 text-lg text-gray-500 line-through">
+                            ${product.price}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-2xl font-bold text-indigo-600">
+                          ${product.price}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {product.rating !== undefined && product.rating !== null && (
+                    <p className="mt-2 text-sm text-gray-600">
+                      ⭐ {product.rating.toFixed(1)} rating
+                    </p>
+                  )}
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
     </div>
   );
 }

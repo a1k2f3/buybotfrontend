@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "cross-env NODE_OPTIONS=\"--max-old-space-size=8192\" NEXT_BUILD_WORKER_THREADS=1 next build",
+    "build": "cross-env NEXT_BUILD_WORKER_THREADS=1 node --max-old-space-size=12288 ./node_modules/next/dist/bin/next build",
     "start": "next start",
     "lint": "eslint"
   },
