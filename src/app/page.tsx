@@ -1,7 +1,7 @@
 "use client";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 60;
+// export const revalidate = 60;
 
 import Slider from "@/components/card/Slider"; // Hero slider with deals
 import DealsSection from "@/components/card/DealsSection"; // New: Flash sales/deals
@@ -11,7 +11,7 @@ import TrendingProducts from "@/components/card/TrendingProducts"; // New or ren
 import ProductsSection from "@/components/card/ProductSection"; // All/New Arrivals
 import TrustBadges from "@/components/card/TrustBadge";
 import NewsletterSignup from "@/components/card/NewsLetterSignup";
-import Footer from "@/components/card/Footer";
+
 
 export default function HomePage() {
   return (
